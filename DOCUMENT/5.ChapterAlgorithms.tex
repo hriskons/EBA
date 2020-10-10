@@ -1,4 +1,4 @@
-\selectlanguage{greek}
+﻿\selectlanguage{greek}
 \chapter{Μέθοδοι προβολής σε υποχώρους \selectlanguage{english}Krylov\selectlanguage{greek}}
 \label{ch:5.chapterAlgorithms}
 
@@ -15,7 +15,7 @@ K_m(F,G) = Range([G, F G,F^2G,...,F^{m-1}G])
 K_m(F,G) = \sum_{i=1}^{s}K_m(F,G^{(i)})
 \end{equation}
 
-όπου $K_m(F, G^{(i)})$ είναι ο υποχώρος \textlatin{Krylov} που έχει παραχθεί απο τον $F$ και την $i$-στη στήλη $G^{(i)}$ απο τον $n x s$ πίνακα $G$.
+όπου $K_m(F, G^{(i)})$ είναι ο υποχώρος \textlatin{Krylov} που έχει παραχθεί από τον $F$ και την $i$-στη στήλη $G^{(i)}$ απο τον $n x s$ πίνακα $G$.
 Στη συνέχεια ορίζουμε τον αλγόριθμο ΒΑ ~\cite{heyouni2010extended, articleKrylovSubspaceMethods,jbilou2003block}
 
 \selectlanguage{english}
@@ -45,7 +45,7 @@ K_m(F,G) = \sum_{i=1}^{s}K_m(F,G^{(i)})
 Η επαναληπτική μέθοδος της \textlatin{Extended Block Arnoldi (EBA)} χρησιμοποιείται έτσι ώστε να κατασκευαστεί ένας ορθοκανονικός πίνακας
 \textlatin{
 \[ V_m = [V_1, V_2, ..., V_m]\]
-} ο οποίος αποτελεί βάση του υποχώρου \textlatin{Krylov $K_m(A, V)$}. Ο περιορισμός του πίνακα Α στον υποχώρο \textlatin{Krylov $K_m(A, V)$} δίνεται απο το
+} ο οποίος αποτελεί βάση του υποχώρου \textlatin{Krylov $K_m(A, V)$}. Ο περιορισμός του πίνακα Α στον υποχώρο \textlatin{Krylov $K_m(A, V)$} δίνεται από το
 \[ Τ_m = V_{m}^{T}AV_m\]
 
 Ο αλγόριθμος EBA ορίζεται ως εξής ~\cite{bentbib2017some, bentbib2015some, druskin1998extended, heyouni2010extended, simoncini2007new}:
