@@ -1,0 +1,203 @@
+\selectlanguage{greek}
+\chapter{Μέθοδοι Υποβιβασμού Τάξης Μοντέλου}
+\label{ch:4.chapterMOR}
+
+Όπως τονίσαμε και στην εισαγωγή της διπλωματικής εργασίας (\ref{ch:1.chapterIntroduction}) τα κυκλώματα που εμφανίζονται σε πραγματικές εφαρμογές έχουν φτάσει τα εκατομμύρια στοιχεία. Τα γραμμικά συστήματα που προκύπτουν απο τέτοιας κλίμακας κυκλώματα καθιστούν την συμβατική επίλυση αδύνατη.
+
+Μια απο τις πλέον εδραιωμένες τεχνικές για τη μείωση της πολυπλοκότητας των γραμμικών κυκλωμάτων οι οποίες αποσκοπούν στη μείωση των απαιτούμενων υπολογισμών ή στην απλοποίηση των μαθηματικών μοντέλων είναι οι μέθοδοι υποβιβασμού τάξης μοντέλου. (\textlatin{Model Order Reduction (MOR)}).
+
+Οι μέθοδοι υποβιβασμού τάξης μοντέλου που θα εξετάσουμε στα πλαίσια της παρούσας διπλωματικής εργασίας βασίζονται στους υποχώρους \textlatin{Krylov} ~\ref{KrylovSubspaces}. Τέτοιες μέθοδοι αποτελούν οι \textlatin{Passive Reduced-order Interconnect Macromodeling Algorithm (PRIMA)}~\cite{odabasioglu2003prima} και \textlatin{ Structure-Preserving Reduced-order Interconnect Macromodeling (SPRIM)} ~\cite{freund2004sprim}
+
+
+\section{Η μέθοδος υποβιβασμού τάξης μοντέλου \textlatin{PRIMA}}
+
+Ο πλεόν βασικός αλγόριθμος για υποβιβασμό τάξης μοντέλου \textlatin{MOR} είναι ο \textlatin{Passive Reduced-order Interconnect Macromodeling Algorithm (PRIMA)}. Μέρος του αλγορίθμου είναι και η μέθοδος \textlatin{Block Arnoldi} που θα εξετάσουμε και υλοποιήσαμε στα πλαίσια της διπλωματικής εργασίας. O \textlatin{Block Arnoldi} αλγόριθμος χρησιμοποιείται για την παραγωγή ορθοκανονικής βάσης για έναν πίνακα μετασχηματισμού.
+
+Πρίν περιγράψουμε τον αλγόριθμο \textlatin{PRIMA} ορίζουμε τους πίνακες οι οποίοι προκύπτουν απο τη μέθοδο \textlatin{MNA}:
+
+\begin{equation} \label{Cxn}
+    C x_n = -G x_n + B v_p
+\end{equation}
+\[
+    i_p = L^T x_n
+\]
+όπου τα διανύσματα $i_p$ και $v_p$ δηλώνουν τις πηγές ρεύματος και τάσης αντίστοιχα
+\[
+    G = 
+    \begin{bmatrix}
+    N & E \\
+    -E^T & 0
+    \end{bmatrix}\\
+\]
+\[
+    C = 
+    \begin{bmatrix}
+    Q & 0 \\
+    0 & H
+    \end{bmatrix}\\
+\]
+\[
+    x_n = 
+    \begin{bmatrix}
+    v \\
+    i
+    \end{bmatrix}\\
+\]
+
+Οι $n * n$ πίνακες $G$ και $C$ αντιπροσωπεύουν τους πίνακες αγωγιμότητας και επιδεκτικότητας. Οι $N$
+, $Q$ και $H$ πίνακες περιλαμβάνουν τις αντιστάσεις, πυκνωτές και πηνεία αντίστοιχα. Ο πίνακας $E$ περιλαμβάνει μονάδες, αρνητικές μονάδες και μηδενικά που αντιστοιχούν στις μεταβλητές ρεύματος των νόμων του  \textlatin{Kirchhoff (KCL)}. Στην περίπτωση που οι N-θύρες του κυκλώματος περιλαμβάνουν μόνο θετικά γραμμικά στοιχεία, $Q$, $H$ και $N$ είναι συμμετρικοί, θετικά δηλωμένοι πίνακες (\textlatin{Symmetric Positive Definite (SPD)}). Με βάση το παραπάνω ο $C$ είναι επίσης \textlatin{SPD}. 
+
+Συνεπώς, επιστρέφοντας στην ισότητα \ref{Cxn}, δηλώνουμε:
+
+\begin{equation}
+    A = -G^{-1}C
+\end{equation}
+\begin{equation}
+    R = G^{-1}B
+\end{equation}
+
+
+Μετά απο $\left\lfloor\dfrac{q}{N}\right\rfloor +1$ επαναλήψεις (η επιπλέον επανάληψη είναι απαραίτητη μόνο όταν $\frac{q}{N}$ δεν είναι ακέραιος) του \textlatin{PRIMA}, o $n x q$ πίνακας $X$ είναι ο εξής:
+
+\[
+    colsp(X) = K_r(A, R,\left\lfloor\dfrac{q}{N}\right\rfloor)
+\]
+\[
+    X^T X = I_q
+\]
+
+Στον βασικό αλγόριθμο \textlatin{PRIMA} χρησιμοποιείται μια παραλλαγή της μεθόδου \textlatin{Block Arnoldi} η οποία μας δίνει το εξής:
+\[
+    (X^T C X)\dot{\widetilde{x_q}} = - (X^T G X)\dot{\widetilde{x_q}} + (X^T B)u_p
+\]
+\[
+    i_p = (L^TX)\dot{\widetilde{x_q}}
+\]
+
+To υποβιβασμένης τάξης μοντέλο των \textlatin{MNA} πινάκων είναι:
+
+\[
+    \widetilde{C} = X^T C X
+\]
+\[
+    \widetilde{G} = X^T G X
+\]
+\[
+    \widetilde{B} = X^T B
+\]
+\[
+    \widetilde{L} = X^T L
+\]
+
+Μετά τον υποβιβασμό του μοντέλου του πίνακα $Y(s)$ στο οποίο αναφερόμαστε ως $\hat{Y}(s)$ είναι πλέον:
+\[
+    \hat{Y}(s) = \widetilde{L}^T (\widetilde{G} + s \widetilde{C})^{-1} \widetilde{B}
+\]
+
+Τυπικά, το μέγεθος των πινάκων $\widetilde{G}$ και $\widetilde{C}$ είναι μικρό με αποτέλεσμα αν είναι εύκολο να βρούμε τους πόλους και τα μηδενικά του $\hat{Y}(s)$.
+
+\section{Η μέθοδος υποβιβασμού τάξης μοντέλου \textlatin{SPRIM}}
+
+Για την περιγραφή του αλγορίθμου \textlatin{SPRIM} θα χρειαστεί να ορίσουμε τους εξής πίνακες:
+
+\[
+   G = 
+    \begin{bmatrix}
+    G_1  & G^T_2\\
+    -G_2 & 0
+    \end{bmatrix}
+\]
+\[
+    C = 
+    \begin{bmatrix}
+    C_1  & 0\\
+    0 & C_2
+    \end{bmatrix}
+\]
+\[
+    B = 
+    \begin{bmatrix}
+    B_1\\
+    0
+    \end{bmatrix}
+\]
+
+Στο πρώτο βήμα του αλγορίθμου, δημιουργούμε τους εξής πίνακες $A$ και $R$ ως εξής:
+\[
+    A = (G + sC)^{-1}C
+\]
+\[
+    R = (G + sC)^{-1}B
+\]
+
+Στη συνέχεια και ένα απο τα βασικά σημεία του αλγορίθμου είναι η επιλογή της μεθόδου για την παραγωγή του υπο-χώρου \textlatin{Krylov}. Το σημείο αυτό είναι που εισέρχεται και η μελέτη που πραγματοποιήσαμε στα πλαίσια της διπλωματικής εργασίας για την χρήση του Εκτεταμένου \textlatin{Block Arnoldi} αλγορίθμου \ref{EBA}.
+
+Με τη χρήση του επιθυμητού αλγορίθμου λαμβάνουμε το εξής αποτέλεσμα:
+
+\[
+    span(V_n) = K_n(A, R)
+\]
+
+Συνεχίζουμε με το επόμενο βήμα να είναι ο κατακερματισμός του πίνακα $V_n$ σε κομμάτια (\textlatin{blocks}):
+
+\[
+V_n = \begin{bmatrix}
+V_1 \\
+V_2
+\end{bmatrix}
+\]
+
+o οποίος μετατρέπεται στην εξής μορφή:
+
+\[
+V_n = \begin{bmatrix}
+V_1 & 0 \\
+0 & V_2
+\end{bmatrix}
+\]
+
+Υπολογίζουμε τους νέους πίνακες μέσω της ελαχιστοποίησης:
+
+\[
+    \widetilde{G_1} = V_q^{T}G_1V_1
+\]
+\[
+    \widetilde{G_2} = V^2_TG_2V_1
+\]
+\[
+    \widetilde{C_1} = V^1_TC_1V_1
+\]
+\[
+    \widetilde{C_2} = V^2_TC_2V_2
+\]
+\[
+    \widetilde{B_1} = V^1_TB_1
+\]
+
+και με βάση του πίνακες αυτούς έχουμε:
+
+
+\[
+\widetilde{G_n} = \begin{bmatrix}
+\widetilde{G_1} & \widetilde{G_2}^T \\
+-\widetilde{G_2}^T & 0
+\end{bmatrix}
+\]
+\[
+\widetilde{C_n} = \begin{bmatrix}
+\widetilde{C_1} & 0 \\
+0 & \widetilde{C_2}
+\end{bmatrix}
+\]
+\[
+\widetilde{B_n} = \begin{bmatrix}
+\widetilde{B_1} \\
+0
+\end{bmatrix}
+\]
+
+Τέλος, από τους νέους πίνακες υπολογίζεται η συνάρτηση μεταφοράς του συστήματος με
+τον εξής τρόπο:
+\begin{equation}
+    \Tilde{Z_n}(s) = \Tilde{B_n}^T(\Tilde{G_n} + s\Tilde{C_n})^{-1}\Tilde{B_n}
+\end{equation}

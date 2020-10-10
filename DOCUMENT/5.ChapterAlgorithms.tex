@@ -1,0 +1,77 @@
+\selectlanguage{greek}
+\chapter{Μέθοδοι προβολής σε υποχώρους \selectlanguage{english}Krylov\selectlanguage{greek}}
+\label{ch:5.chapterAlgorithms}
+
+\section{\textlatin{Block Arnoldi (BA)}}
+Ο αλγόριθμος \textlatin{Block Arnoldi (BA)} θα εφαρμοστεί στους πίνακες $F, G$ όπου $F \in \R^{nxn}$ και $G \in R^{nxs}$. Ο υποχώρος \textlatin{Krylov} δίνεται απο:
+
+\begin{equation}
+K_m(F,G) = Range([G, F G,F^2G,...,F^{m-1}G])
+\end{equation}
+
+Σημειώνουμε οτι ο υποχώρος $K_m(F,G)$ είναι το άθροισμα απο $s$ υποχώρους \textlatin{Krylov}
+
+\begin{equation}
+K_m(F,G) = \sum_{i=1}^{s}K_m(F,G^{(i)})
+\end{equation}
+
+όπου $K_m(F, G^{(i)})$ είναι ο υποχώρος \textlatin{Krylov} που έχει παραχθεί απο τον $F$ και την $i$-στη στήλη $G^{(i)}$ απο τον $n x s$ πίνακα $G$.
+Στη συνέχεια ορίζουμε τον αλγόριθμο ΒΑ ~\cite{heyouni2010extended, articleKrylovSubspaceMethods,jbilou2003block}
+
+\selectlanguage{english}
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \caption{\selectlanguage{greek} Αλγόριθμος \selectlanguage{english} Block-Arnoldi}
+    \selectlanguage{greek}Είσοδοι:$F$ πίνακας $n x n$ $G$ πίνακας $n x s$ και $m$ ακέραιος\\
+    Παραγοντοποίηση $QR$ του $G = V_1 R_1$\\
+    \selectlanguage{english}
+    \For{$j\gets1$ \KwTo $m$ \KwBy $1$}{
+        $W_j = F V_j$
+        \For{$i\gets1$ \KwTo $j$ \KwBy $1$}{
+            $H_{i,j} = V_i^{T}W_j$\\
+            $W_{j} = W_{j} - V_{j} H_{i,j}$
+        }
+        \selectlanguage{greek}
+        Πραγματοποιούμε παραγοντοποίηση $QR$ του $Q_j R_j = Q_j$\\
+        $H_{j+1,j} = R_j$
+    }
+\end{algorithm}
+\selectlanguage{greek}
+
+
+
+\section{\textlatin{Extended Block Arnoldi (EBA)}} \label{EBA}
+
+Η επαναληπτική μέθοδος της \textlatin{Extended Block Arnoldi (EBA)} χρησιμοποιείται έτσι ώστε να κατασκευαστεί ένας ορθοκανονικός πίνακας
+\textlatin{
+\[ V_m = [V_1, V_2, ..., V_m]\]
+} ο οποίος αποτελεί βάση του υποχώρου \textlatin{Krylov $K_m(A, V)$}. Ο περιορισμός του πίνακα Α στον υποχώρο \textlatin{Krylov $K_m(A, V)$} δίνεται απο το
+\[ Τ_m = V_{m}^{T}AV_m\]
+
+Ο αλγόριθμος EBA ορίζεται ως εξής ~\cite{bentbib2017some, bentbib2015some, druskin1998extended, heyouni2010extended, simoncini2007new}:
+
+\selectlanguage{english}
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \caption{\selectlanguage{greek} Αλγόριθμος \selectlanguage{english} Extended Block-Arnoldi (EBA)}
+    \selectlanguage{greek}
+    Είσοδοι: A πίνακας $n x n, V$ πίνακας $n x r$ και $m$ ακέραιος\\
+    Παραγοντοποίηση $QR$ του $[V, A^{-1}V]$\\
+    Θέτουμε $\mathbb{V}_0 = []$\\
+    \selectlanguage{english}
+    \For{$j\gets1$ \KwTo $m$ \KwBy $1$}{
+        \selectlanguage{greek}
+        Θέτουμε $V_j^{(1)}$ τις πρώτες $r$ στήλες του $V_j$\\
+        Θέτουμε $V_j^{(2)}$ τις επόμενες $r$ στήλες του $V_j$\\
+        $\mathbb{V}_j = [\mathbb{V}_{j-1}, V_j]$\\
+        $\hat{V}_{j+1} = [AV_j^(1), A^{-1}V_j^{(2)}]$\\
+        Ορθογωνοποιούμε $\hat{V}_{j+1}$ με βάση τον  $\mathbb{V}_j$ για να πάρουμε τον $V_{j+1}$\\
+        \selectlanguage{english}
+        \For{$i\gets1$ \KwTo $j$ \KwBy $1$}{
+            $H_{i,j} = V_i^{T}\hat{V}_{j+1}$\\
+            $\hat{V}_{j+1} = \hat{V}_{j+1} - V_{j} H_{i,j}$
+        }
+        \selectlanguage{greek}
+        Πραγματοποιούμε παραγοντοποίηση $QR$ του $\hat{V}_{j+1}: \hat{V}_{j+1} = V_{j+1} H_{j+1,j}$
+    }
+\end{algorithm}
