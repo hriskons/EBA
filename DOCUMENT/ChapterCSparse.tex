@@ -44,15 +44,18 @@
 \selectlanguage{english}
 \textbf{cs:}
 \begin{verbatim}
-typedef struct cs_sparse /* matrix in compressed-column or triplet form */
+typedef struct cs_sparse /* matrix in compressed-column or
+                            triplet form */
 {
     int nzmax ; /* maximum number of entries */
     int m ; /* number of rows */
     int n ; /* number of columns */
-    int *p ; /* column pointers (size n+1) or col indices (size nzmax) */
+    int *p ; /* column pointers (size n+1) or col indices
+                (size nzmax) */
     int *i ; /* row indices, size nzmax */
     double *x ; /* numerical values, size nzmax */
-    int nz ; /* # of entries in triplet matrix, -1 for compressed-col */
+    int nz ; /* # of entries in triplet matrix, -1 for
+                compressed-col */
 } cs ;
 \end{verbatim}
 
@@ -61,7 +64,7 @@ typedef struct cs_sparse /* matrix in compressed-column or triplet form */
 \selectlanguage{english}
 \textbf{cs\_add:} C = \alpha A + \beta B}
 \begin{verbatim}
-cs *cs_add (const cs *A, const cs *B, double alpha, double beta) ;
+cs *cs_add (const cs *A, const cs *B, double alpha, double beta);
 A           in          sparse matrix 
 B           in          sparse matrix
 alpha       in          scalar
@@ -95,7 +98,8 @@ A           in/out          sparse matrix;
 \textbf{cs\_entry:}
 \begin{verbatim}
 int cs_entry (cs *T, int i, int j, double x) ;
-T           in/out      triplet matrix; new entry added on output 
+T           in/out      triplet matrix; new entry added on 
+                        output 
 i           in          row index of new entry
 j           in          column index of new entry
 x           in          value of new entry
@@ -121,7 +125,8 @@ B           in          sparse matrix
 \begin{verbatim}
 int cs_print (const cs* A, int brief) ;
 A           in          sparse matrix
-brief       in          if 0 print all of A; a few entries otherwise
+brief       in          if 0 print all of A; a few entries 
+                        otherwise
             returns     1 if successful; 0 on error
 \end{verbatim}
 
@@ -132,7 +137,8 @@ brief       in          if 0 print all of A; a few entries otherwise
 \begin{verbatim}
 cs *cs_transpose (const cs* A, int values) ;
 A           in          sparse matrix
-values      in          if 0 only pattern; both pattern and values otherwise
+values      in          if 0 only pattern; both pattern and 
+                        values otherwise
             returns     C = A'; NULL otherwise
 \end{verbatim}
 
@@ -145,7 +151,9 @@ values      in          if 0 only pattern; both pattern and values otherwise
 void *cs_calloc (int n, size_t size) ;
 n         in          number of items to allocate
 size      in          size of each item in bytes
-          returns     if successful pointer to allocated block; NULL on error
+          returns     if successful pointer to allocated 
+                      block; 
+                      NULL on error
 \end{verbatim}
 
 \selectlanguage{greek}
@@ -163,16 +171,25 @@ A           in/out      block to free
 \selectlanguage{english}
 \textbf{css:}
 \begin{verbatim}
-typedef struct cs_symbolic /* symbolic Cholesky, LU, or QR analysis */
+typedef struct cs_symbolic /* symbolic Cholesky, LU, 
+                              or QR analysis */
 {
-    int *pinv ;         /* inverse row perm, for QR, fill red. perm for Chol */
-    int *q ;            /* fill-reducing column permutation for LU and QR */
-    int *parent ;       /* elimination tree for Cholesky and QR */
-    int *cp ;           /* column pointers for Cholesky, row counts for QR */
-    int *leftmost j     /* leftmost[i] = min(find(A(i,:))), for QR */
-    int m2 ;            /* # of rows for QR, after adding fictitious rows */
-    double lnz ;        /* # entries in L for LU or Cholesky; in V for QR */
-    double unz ;        /* # entries in U for LU; in R for QR */
+    int *pinv ;         /*  inverse row perm, for QR, 
+                            fill perm for Chol */
+    int *q ;            /*  fill-reducing column permutation 
+                            for LU and QR */
+    int *parent ;       /*  elimination tree for Cholesky 
+                            and QR */
+    int *cp ;           /*  column pointers for Cholesky, 
+                            row counts for QR */
+    int *leftmost j     /*  leftmost[i] = min(find(A(i,:))), 
+                            for QR */
+    int m2 ;            /*  # of rows for QR, after adding 
+                            fictitious rows */
+    double lnz ;        /*  # entries in L for LU or Cholesky; 
+                            in V for QR */
+    double unz ;        /*  # entries in U for LU; 
+                            in R for QR */
 } css ;
 \end{verbatim}
 
@@ -181,12 +198,15 @@ typedef struct cs_symbolic /* symbolic Cholesky, LU, or QR analysis */
 \selectlanguage{english}
 \textbf{csn:}
 \begin{verbatim}
-typedef struct cs_numeric /* numeric Cholesky, LU, or QR factorization */
+typedef struct cs_numeric /* numeric Cholesky, LU, 
+                             or QR factorization */
 {
-    cs *L ;             /* L for LU and Cholesky, V for QR */
-    cs *U ;             /* U for LU, R for QR, not used for Cholesky */
-    int *pinv ;         /* partial pivoting for LU */
-    double *B ;         /* beta [0..n-l] for QR */
+    cs *L ;             /*  L for LU and Cholesky, 
+                            V for QR */
+    cs *U ;             /*  U for LU, R for QR, 
+                            not used for Cholesky */
+    int *pinv ;         /*  partial pivoting for LU */
+    double *B ;         /*  beta [0..n-l] for QR */
 } csn ;
 \end{verbatim}
 
@@ -209,7 +229,8 @@ A           in/out      array to remove the zeros from
 csn *cs_qr (const cs* A, const css *S) ;
 A           in          matrix to factorize
 S           in          symbolic analysis from cs_sqr
-            returns     numeric factorization N; NULL on error
+            returns     numeric factorization N;
+                        NULL on error
 \end{verbatim}
 
 
@@ -221,7 +242,9 @@ S           in          symbolic analysis from cs_sqr
 csn *cs_sqr (int order, const cs* A, const css *S) ;
 order       in          ordering method to use (0 to 3)
 A           in          matrix to factorize
-qr          in          analyze for QR if nonzero or LU if zero
-            returns     S, symbolic analysis for cs_qr or cs_lu; NULL on error
+qr          in          analyze for QR if nonzero 
+                        or LU if zero
+            returns     S, symbolic analysis for cs_qr 
+                        or cs_lu; NULL on error
 \end{verbatim}
 
